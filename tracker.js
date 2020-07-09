@@ -18,7 +18,7 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
-    init();
+    start();
 });
 
 
@@ -33,70 +33,153 @@ console.table([
     }
 ]);
 
-function init() {
+// Starts the initial inquirer and gets used for recursion
+function start() {
     inquirer.prompt({
         type: 'list',
         message: 'Would you like to do?',
         name: 'toDo',
         choices: ['Add Employee', 'Add Role', 'Add Department', 'View Employee', 'View Role', 'View Department', 'Update Employee Role', 'Exit']
-    }).then((option) => {
-        // Make this a Switch Statment
-        if (option.toDo == 'Add Employee') {
-            addEmpFunc();
-        } else if (option.toDo == 'Add Role') {
-            addRoleFunc();
-        } else if (option.toDo == 'Add Department') {
-            addDptFunc();
-        } else if (option.toDo == 'View Employee') {
-            viewEmpFunc();
-        } else if (option.toDo == 'View Role') {
-            viewRoleFunc();
-        } else if (option.toDo == 'View Department') {
-            viewDptFunc();
-        } else if (option.toDo == 'Update Employee Role') {
-            updateEmpRoleFunc();
-        } else {
-            console.log("Thanks for using the Employee-Tracker! Have a great day and stay safe!\n#NoCovid #BLM")
-            connection.end();
+    }).then(function (result) {
+        switch (result.toDo) {
+            case 'Add Employee':
+                addEmpFunc();
+                break;
+
+            case 'Add Role':
+                addRoleFunc();
+                break;
+
+            case 'Add Department':
+                addDptFunc();
+                break;
+
+            case 'View Employee':
+                viewEmpFunc();
+                break;
+
+            case 'View Role':
+                viewRoleFunc();
+                break;
+
+            case 'View Department':
+                viewDptFunc();
+                break;
+
+            case 'Update Employee Role':
+                updateEmpRoleFunc();
+                break;
+
+            case 'Exit':
+                console.log("Thanks for using the Employee-Tracker! Have a great day and stay safe!\n#NoCovid #BLM")
+                connection.end();
+                break;
         }
     })
 }
 
 // Functions for additional user input based on user answer to init question
+//////////////////////////////////////////////////////////
+
+// Add employee inquirer
 function addEmpFunc() {
     inquirer.prompt([
         {
             type: 'input',
-            message: 'What is the employees first name?',
+            message: `What is the employee's first name?`,
             name: 'first'
         },
         {
             type: 'input',
-            message: 'What is the employees last name?',
+            message: `What is the employee's last name?`,
             name: 'last'
         },
         {
             type: 'list',
-            message: 'What is the employees role?',
+            message: `What is the employee's role?`,
             name: 'role',
-            choices: ['CEO', 'CFO', 'Janitor']
+            choices: [1, 2, 3]
         },
         {
-            // NEED TO MAKE EMPLOYEE POSSESSIVE
             type: 'list',
-            message: 'Who is the employees manager?',
+            message: `Who is the employee's manager?`,
             name: 'manager',
-            choices: ['Joe', 'Jane', 'Jill']
+            choices: [1, 2, 3]
         }
     ]).then((result) => {
         //Call db to enter
+        console.log("Employee Addeed: ");
         console.log(result);
-        // createEmployee(result);
-        init();
+        createEmployee(result);
+        start();
     })
 }
 
+// Add role inquirer
+function addRoleFunc() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: `What is the title of the new role you'd like to add?`,
+            name: 'roleTitle'
+        },
+        {
+            type: 'input',
+            message: 'What is the salary for this role?',
+            name: 'roleSal'
+        },
+        {
+            type: 'list',
+            message: 'What is the department for this role?',
+            name: 'roleDpt',
+            choices: ['Engineering', 'HR', 'Sales', 'Chief', 'Maintenance']
+        }
+    ]).then((result) => {
+        console.log("Role Added: ");
+        console.log(result);
+        createRole(result);
+        start();
+    })
+}
+
+// Add department inquirer
+function addDptFunc() {
+    inquirer.prompt(
+        {
+            type: 'input',
+            message: `What is the name of the department you'd like to add?`,
+            name: 'deptName'
+        }
+    ).then((result) => {
+        console.log("Department Added: ");
+        console.log(result);
+        createDpt(result);
+        start();
+    })
+}
+
+// View employee list
+function viewEmpFunc() {
+    console.log("Employee List: ");
+    start();
+}
+
+// View role list
+function viewRoleFunc() {
+    console.log("Role List: ");
+    start();
+}
+
+// View department list
+function viewDptFunc() {
+    console.log("Department List: ");
+    start();
+}
+
 // Set of functions to create table data in workbench based on user input from inquirer prompts
+////////////////////////////////////////////////
+
+// Creates added employee in db
 function createEmployee(result) {
     console.log("Creating a new employee...\n");
     var query = connection.query(
@@ -110,6 +193,45 @@ function createEmployee(result) {
         function (err, res) {
             if (err) throw err;
             console.log(res.affectedRows + " Employee Added!\n");
+        }
+    );
+
+    // logs the actual query being run
+    console.log(query.sql);
+}
+
+// Creates added role in db
+function createRole(result) {
+    console.log("Creating a new role...\n");
+    var query = connection.query(
+        "INSERT INTO roleTbl SET ?",
+        {
+            title: result.roleTitle,
+            salary: result.roleSal,
+            department_id: result.roleDpt,
+        },
+        function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " Role Added!\n");
+        }
+    );
+
+    // logs the actual query being run
+    console.log(query.sql);
+}
+
+
+// Creates added department in db
+function createDpt(result) {
+    console.log("Creating a new department...\n");
+    var query = connection.query(
+        "INSERT INTO departmentTbl SET ?",
+        {
+            name: result.deptName
+        },
+        function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " Department Added!\n");
         }
     );
 
