@@ -46,19 +46,11 @@ function start() {
         type: 'list',
         message: 'Would you like to do?',
         name: 'toDo',
-        choices: ['Add Employee', 'Add Role', 'Add Department', 'View Employee', 'View Role', 'View Department', 'Update Employee Role', 'Exit']
+        choices: ['View All', 'View Employee', 'View Role', 'View Department', 'Add Employee', 'Add Role', 'Add Department', 'Update Employee Role', 'Exit']
     }).then(function (result) {
         switch (result.toDo) {
-            case 'Add Employee':
-                addEmpFunc();
-                break;
-
-            case 'Add Role':
-                addRoleFunc();
-                break;
-
-            case 'Add Department':
-                addDptFunc();
+            case 'View All':
+                viewAllFunc();
                 break;
 
             case 'View Employee':
@@ -73,6 +65,18 @@ function start() {
                 viewDptFunc();
                 break;
 
+            case 'Add Employee':
+                addEmpFunc();
+                break;
+
+            case 'Add Role':
+                addRoleFunc();
+                break;
+
+            case 'Add Department':
+                addDptFunc();
+                break;
+
             case 'Update Employee Role':
                 updateEmpRoleFunc();
                 break;
@@ -85,13 +89,84 @@ function start() {
     })
 }
 
-// Functions for additional user input based on user answer to init question
-//////////////////////////////////////////////////////////
+
+// View Table Functions 
+// ---------------------------------------
+// View ALL
+function viewAllFunc() {
+    //connection.query("SELECT * FROM employeeTbl LEFT JOIN roleTbl ON employeeTbl.role_id = roleTbl.id", function (err, res) {
+    connection.query("SELECT employeeTbl.id, employeeTbl.first_name, employeeTbl.last_name, roleTbl.title AS title, roleTbl.salary AS salary, departmentTbl.name As department FROM EmployeeTbl LEFT JOIN roleTbl on EmployeeTbl.role_id = roleTbl.id Left Join departmentTbl on roleTbl.department_id = departmentTbl.id", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        start();
+    })
+}
+
+// View employee list
+function viewEmpFunc() {
+    connection.query("SELECT id, first_name, last_name FROM employeeTbl", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        start();
+    })
+}
+
+// View role list
+function viewRoleFunc() {
+    connection.query("SELECT id, title, salary FROM roleTbl", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        start();
+    })
+}
+
+// View department list
+function viewDptFunc() {
+    connection.query("SELECT id, name FROM departmentTbl", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        start();
+    })
+}
 
 
+// Functions for adding to tables based on user choices 
+// ---------------------------------------
 
 // Add employee inquirer
 function addEmpFunc() {
+
+    // let roleArr = [];
+    // // let managerArr = [];
+
+    // currentRoleFunc();
+    // function currentRoleFunc() {
+    //     connection.query("SELECT title FROM roleTbl", function (err, res) {
+    //         if (err) throw err;
+    //         let currentRole;
+    //         for (var i = 0; i < res.length; i++) {
+    //            currentRole = (res[i].title);
+    //            roleArr.push(currentRole);
+    //         }
+    //     })
+    // }
+
+    // currentManagerFunc()
+
+    // function currentManagerFunc() {
+    //    var man = connection.query("SELECT first_name, last_name FROM employeeTbl", function (err, res) {
+    //         if (err) throw err;
+    //         let currentManager;
+    //         // for (var i = 0; i < 10; i++) {
+    //             // currentManager = (res[1]);
+    //             console.log(man)
+    //         //    managerArr.push(currentManager);
+    //         // }
+    //         // roleArr.push(currentRole);
+    //     })
+    //     currentManagerFunc()
+    // }
+
     // or just pull roles and managers here
     // check great bay
     inquirer.prompt([
@@ -110,14 +185,14 @@ function addEmpFunc() {
             message: `What is the employee's role?`,
             name: 'role',
             choices: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-            // This needs to be a variable representing all current role choices from DB
-            // pull list display as choices select * from roleTbl and store in an object 
+            // ['CEO', 'Sales Lead', 'Salesperson', 'Lead Engineer', 'Software Engineer', 'Accountant', 'Legal Team Lead', 'Lawyer', 'Lead Engineer']
+
         },
         {
             type: 'list',
             message: `Who is the employee's manager?`,
             name: 'manager',
-            choices: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, null]
+            choices: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
             // This needs to be a variable representing all current manager (employee) choices from DB
         }
     ]).then((result) => {
@@ -146,7 +221,8 @@ function addRoleFunc() {
             type: 'list',
             message: 'What is the department for this role?',
             name: 'roleDpt',
-            choices: ['Engineering', 'HR', 'Sales', 'Chief', 'Maintenance']
+            choices: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            //['Chief', 'Sales', 'Engineering', 'Finance', 'Legal']
             // This needs to be a variable representing all current department choices from DB
         }
     ]).then((result) => {
@@ -173,35 +249,10 @@ function addDptFunc() {
     })
 }
 
-// View employee list
-function viewEmpFunc() {
-    connection.query("SELECT * FROM employeeTbl", function (err, res) {
-        if (err) throw err;
-        console.table(res);
-        start();
-    })
-}
 
-// View role list
-function viewRoleFunc() {
-    connection.query("SELECT * FROM roleTbl", function (err, res) {
-        if (err) throw err;
-        console.table(res);
-        start();
-    })
-}
-
-// View department list
-function viewDptFunc() {
-    connection.query("SELECT * FROM departmentTbl", function (err, res) {
-        if (err) throw err;
-        console.table(res);
-        start();
-    })
-}
 
 // Set of functions to create table data in workbench based on user input from inquirer prompts
-////////////////////////////////////////////////
+// ---------------------------------------
 
 // Creates added employee in db
 function createEmployee(result) {
@@ -219,9 +270,6 @@ function createEmployee(result) {
             console.log(res.affectedRows + " Employee Added!\n");
         }
     );
-
-    // logs the actual query being run
-    console.log(query.sql);
 }
 
 // Creates added role in db
@@ -239,9 +287,6 @@ function createRole(result) {
             console.log(res.affectedRows + " Role Added!\n");
         }
     );
-
-    // logs the actual query being run
-    console.log(query.sql);
 }
 
 
@@ -258,9 +303,6 @@ function createDpt(result) {
             console.log(res.affectedRows + " Department Added!\n");
         }
     );
-
-    // logs the actual query being run
-    console.log(query.sql);
 }
 
 
