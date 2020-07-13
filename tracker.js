@@ -50,7 +50,7 @@ function start() {
     // build an array of employees, dpts and roles check to see if anything has changed 
     inquirer.prompt({
         type: 'list',
-        message: 'Would you like to do?',
+        message: 'What would you like to do?',
         name: 'toDo',
         choices: ['View All', 'View Employee', 'View Role', 'View Department', 'Add Employee', 'Add Role', 'Add Department', 'Update Employee Role', 'Exit']
     }).then(function (result) {
@@ -411,7 +411,7 @@ async function updateEmpRoleFunc() {
             "UPDATE employeeTbl SET role_id=? WHERE first_name=? AND last_name=?",
             [rolesIdArr[rolesIndex], employeeName[0], employeeName[1]], function (err, res) {
                 if (err) throw err;
-                console.log("(Updating employee role.")
+                console.log("Updating employee role.")
                 start();
             }
         )
