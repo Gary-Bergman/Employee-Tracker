@@ -11,8 +11,6 @@ let managerArr = [];
 let managerIdArr = [];
 let employeeArr = [];
 
-
-
 // Connect to MySQL
 var connection = mysql.createConnection({
     host: "localhost",
@@ -151,7 +149,6 @@ function addEmpFunc() {
             if (err) throw err;
             let currentRole;
             let currentRoleId;
-            // console.log(res.title)
             for (var i = 0; i < res.length; i++) {
                 currentRole = (res[i].title);
                 currentRoleId = (res[i].id);
@@ -261,7 +258,6 @@ function addDptFunc() {
         }
     ).then((result) => {
         console.log("Department Added: ");
-        console.log(result);
         createDpt(result);
         start();
     })
@@ -288,11 +284,6 @@ function createEmployee(result, roleIdArr, managerIdArr, roleArr, managerArr) {
         }
     }
 
-    console.log(managerIndex);
-    console.log(roleIndex)
-
-    console.table(roleArr)
-    console.table(managerArr)
     connection.query(
         "INSERT INTO employeeTbl SET ?",
         {
@@ -348,7 +339,6 @@ function createDpt(result) {
     );
 }
 
-
 // SET of functions to update employee role
 // ---------------------------------------
 
@@ -396,8 +386,6 @@ async function updateEmpRoleFunc() {
     let rolesArr = rolesObj.arrayStr;
     let rolesIdArr = rolesObj.arrayId
 
-
-    console.log(rolesIdArr)
     inquirer.prompt([
         {
             type: 'list',
@@ -423,6 +411,7 @@ async function updateEmpRoleFunc() {
             "UPDATE employeeTbl SET role_id=? WHERE first_name=? AND last_name=?",
             [rolesIdArr[rolesIndex], employeeName[0], employeeName[1]], function (err, res) {
                 if (err) throw err;
+                console.log("(Updating employee role.")
                 start();
             }
         )
