@@ -3,14 +3,14 @@
   
   ## Demo
 
-  ![Employee Tracker gif](assets/images/employeeTracker.gif)
+  ![Employee Tracker gif](./assets/images/employeeTracker.gif)
 
 
   [MP4 Demo](https://drive.google.com/file/d/1p-LVdQCpWCzkSMdTy3_sxY9V3SCLyuNS/view?usp=sharing)
   
   ## Description
 
-  This project allowed me to create an interface, particularly a CMS - commonly known as a Content Management System, that make it easy to view and interact with information stored in a database. This CLI allows a user to view, add, and update employee's, role's, and department's in a streamlined manner. I was able to build and design this system for managing a company's employees using node, inquirer, and MySQL.
+  This project allowed me to create an interface, particularly a Content Management System (CMS), that make it easy to view and interact with information stored in a database. This CLI allows a user to view, add, and update employee's, role's, and department's in a streamlined manner. I was able to build and design this system for managing a company's employees using node, inquirer, and MySQL.
 
   ## Table of Contents
 
