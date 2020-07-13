@@ -3,7 +3,7 @@
   
   ## Demo
 
-  ![Note Taker gif](assets/images/employeeTracker.gif)
+  ![Employee Tracker gif](assets/images/employeeTracker.gif)
 
 
   [MP4 Demo](https://drive.google.com/file/d/1p-LVdQCpWCzkSMdTy3_sxY9V3SCLyuNS/view?usp=sharing)
